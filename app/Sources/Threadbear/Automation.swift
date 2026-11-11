@@ -217,6 +217,11 @@ enum Automation {
         }
         let shown: String
         if let settings = app.runnerSettings {
+            let pools = app.pools.map { pool in
+                let accounts = pool.accountIds.joined(separator: ", ")
+                let folders = pool.folders.isEmpty ? "" : " [" + pool.folders.joined(separator: ", ") + "]"
+                return "\(pool.id) \"\(pool.title)\": " + accounts + folders
+            }
             shown = json([
                 "tab": app.settingsTab.rawValue,
                 "defaultCwd": settings.defaultCwd,
@@ -231,7 +236,7 @@ enum Automation {
                 "smallJobsPool": settings.models.pool ?? "",
                 "privateFolders": settings.models.privateFolders,
                 "error": app.settingsError ?? "",
-                "pools": app.pools.map { "\($0.id) \"\($0.title)\": " + $0.accountIds.joined(separator: ", ") + ($0.folders.isEmpty ? "" : " [" + $0.folders.joined(separator: ", ") + "]") },
+                "pools": pools,
                 "poolsError": app.poolsError ?? "",
                 // The Phone & browser tab: each paired device as one line,
                 // the website, and why nothing can pair when sync is off.
